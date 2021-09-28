@@ -70,7 +70,7 @@ func saveHandler(w http.ResponseWriter, r *http.Request, title string){
 }
 
 // variable to hold/cache all pages rather than rendering them multiple times
-var templates = template.Must(template.ParseFiles("edit.html", "view.html", "frontPage.html"))
+var templates = template.Must(template.ParseFiles("edit.html", "view.html"))
 
 // fn to render to a given html template
 func renderTemplate(w http.ResponseWriter, tmpl string, p *Page){
