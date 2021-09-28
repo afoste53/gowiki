@@ -5,6 +5,8 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"regexp"
+	"errors"
 )
 
 type Page struct {
@@ -28,8 +30,30 @@ func loadPage(title string) (*Page, error) {
 	return &Page{Title: title, Body: body}, nil
 }
 
+// reg-ex to validate url path
+var validPath = regexp.MustCompile("^/(edit|save|view)/([a-zA-z0-9]+)$")
+
+func getTitle(w http.ResponseWriter, r *http.Request)(string, error){
+	m := validPath.FindStringSubmatch(r.URL.Path)
+
+	// if it doesn't match, return 404
+	if m == nil {
+		http.NotFound(w, r)
+		return "", errors.New("Invalid Page Title")
+	}
+
+	// the title is stored at m[2]
+	return m[2], nil
+}
+
 func viewHandler(w http.ResponseWriter, r *http.Request){
-	title := r.URL.Path[len("/view/"):]
+	// check if page exists and fetch
+	title, err := getTitle(w, r)
+
+	if err != nil {
+		return 
+	}
+
 	p, err := loadPage(title)
 
 	// redirect if page doesn't exist
@@ -42,7 +66,14 @@ func viewHandler(w http.ResponseWriter, r *http.Request){
 }
 
 func editHandler(w http.ResponseWriter, r *http.Request){
-	title := r.URL.Path[len("/edit/"):]
+	// check if page exists and fetch it if so
+	title, err := getTitle(w, r)
+
+	if err != nil {
+		return
+	}
+
+
 	p, err := loadPage(title)
 	if err != nil {
 		p = &Page{Title: title}
@@ -52,7 +83,13 @@ func editHandler(w http.ResponseWriter, r *http.Request){
 }
 
 func saveHandler(w http.ResponseWriter, r *http.Request){
-	title := r.URL.Path[len("/save/"):]
+	// check if page exists and fetch it if so
+	title, err := getTitle(w, r)
+
+	if err != nil {
+		return
+	}
+
 	body := r.FormValue("body")
 
 	p := &Page{Title: title, Body: []byte(body)}
