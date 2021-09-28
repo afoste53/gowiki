@@ -1,5 +1,23 @@
-<h1>{{.Title}}</h1>
+<!DOCTYPE html>
 
-<p>[<a href="/edit/{{.Title}}">edit</a>]</p>
+<html lang="en">
+	<head>
 
-<div>{{printf "%s" .Body}}</div>
+		<meta charset="UTF-8">
+
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.1/css/bootstrap-grid.min.css" integrity="sha512-MJjgE48PpWFK4ZQowkReHYVkHv9Rl3ZqdxxdbisYuR0q0qRyVHSNw52YBvc0sqT0qtJFT3dirXdEMtd1l56ZUQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+		<title>{{.Title}}</title>
+	</head>
+	<body>
+		<header class="d-flex text-primary">
+			<h1 class="text-primary">{{.Title}}</h1>
+		</header>
+	
+		<div class="container">
+			<p>[<a href="/edit/{{.Title}}">edit</a>]</p>
+
+			<div class="container" >{{printf "%s" .Body}}</div>
+		</div>
+	</body>
+</html>
