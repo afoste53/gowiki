@@ -66,19 +66,17 @@ func saveHandler(w http.ResponseWriter, r *http.Request){
 	http.Redirect(w, r, "/view/" + title, http.StatusFound)
 }
 
+// variable to hold/cache all pages rather than rendering them multiple times
+var templates = template.Must(template.ParseFiles("edit.html", "view.html"))
+
 // fn to render to a given html template
 func renderTemplate(w http.ResponseWriter, tmpl string, p *Page){
-	t, err := template.ParseFiles(tmpl + ".html")
+	t, err := templates.ExecuteTemplate(w, tmpl + ".html", p)
 
 	// handle err if not nil
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
-	}
-
-	err = t.Execute(w, p)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
 
