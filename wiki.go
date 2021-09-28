@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"html/template"
 	"io/ioutil"
 	"log"
@@ -29,6 +30,9 @@ func loadPage(title string) (*Page, error) {
 	return &Page{Title: title, Body: body}, nil
 }
 
+func frontPageHandler(w http.ResponseWriter, r *http.Request){
+	fmt.Fprintf(w, "<h1>Welcome to the front page!</h1><br /><div><p>Why don't you stay awhile</p></div>")
+}
 
 func viewHandler(w http.ResponseWriter, r *http.Request, title string){
 	p, err := loadPage(title)
@@ -66,7 +70,7 @@ func saveHandler(w http.ResponseWriter, r *http.Request, title string){
 }
 
 // variable to hold/cache all pages rather than rendering them multiple times
-var templates = template.Must(template.ParseFiles("edit.html", "view.html"))
+var templates = template.Must(template.ParseFiles("edit.html", "view.html", "frontPage.html"))
 
 // fn to render to a given html template
 func renderTemplate(w http.ResponseWriter, tmpl string, p *Page){
@@ -100,6 +104,7 @@ func makeHandler(fn func (http.ResponseWriter, *http.Request, string)) http.Hand
 
 
 func main(){
+	http.HandleFunc("/", frontPageHandler)
 	http.HandleFunc("/view/", makeHandler(viewHandler))
 	http.HandleFunc("/edit/", makeHandler(editHandler))
 	http.HandleFunc("/save/", makeHandler(saveHandler))
